@@ -1,0 +1,52 @@
+{% extends 'nav.html' %}
+{% block title %} รายละเอียดกระทู้ {% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col">
+            <!-- ปุ่มกลับไปหน้ารายการกระทู้ -->
+            <a href="{% url 'thread-list' %}" class="btn btn-secondary mb-3">
+                ← กลับไปหน้ารายการกระทู้
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <!-- แสดง Title และ Content -->
+            <h1>{{ thread.title }}</h1>
+            <p class="lead">โดย {{ thread.author.username }} | สร้างเมื่อ {{ thread.created_at|date:"Y-m-d H:i" }}</p>
+            <hr>
+            <h4 style="color:#8D38CE;">{{ thread.content }}</h4> 
+            <hr>
+
+            <!-- ฟอร์มสำหรับคอมเม้น -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <h5>แสดงความคิดเห็น</h5>
+                    <textarea class="form-control" id="comment_content" name="content" rows="5" placeholder="พิมพ์ความคิดเห็นของคุณที่นี่"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">ส่งความคิดเห็น</button>
+            </form>
+            <hr>
+
+            <!-- แสดงคอมเม้นทั้งหมด -->
+            <h4>ความคิดเห็นทั้งหมด</h4>
+            {% for comment in comments %}
+                <div class="mb-3">
+                    {% if comment.author.is_staff %}
+                        <p><strong style="color: blue;">{{ comment.author.username }}</strong> กล่าวว่า:</p>
+                    {% else %}
+                        <p><strong>{{ comment.author.username }}</strong> กล่าวว่า:</p>
+                    {% endif %}
+                    <p>{{ comment.content }}</p>
+                    <small class="text-muted">{{ comment.created_at|date:"Y-m-d H:i" }}</small>
+                </div>
+                <hr>
+            {% empty %}
+                <p>ยังไม่มีความคิดเห็น</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

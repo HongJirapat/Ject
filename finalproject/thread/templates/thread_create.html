@@ -1,0 +1,114 @@
+{% extends 'nav.html' %}
+{% load myfilters %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <label for="id_title" class="form-label" style="top:30px;">ระบุคำถามของคุณ</label>
+                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+                        สร้างหมวดหมู่ใหม่
+                    </button>
+                </div>
+                <div>
+                    {{ form.title|add_style:'border: 1px solid #ddd; border-radius: 5px; margin-top:-25px; padding: 5px; font-size: 16px; width: 100%; max-width: 600px; box-sizing: border-box;' }}
+                    {{ form.title.errors }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_content" class="form-label" style="padding-top:20px;">ระบุรายละเอียดของคำถาม</label>
+                    <br>
+                    {{ form.content }}
+                    {{ form.content.errors }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_category" class="form-label">เลือกแท็กที่เกี่ยวข้องกับกระทู้</label>
+                    <div id="category-buttons">
+                        {% for category in categories %}
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="category" id="category_{{ category.id }}" value="{{ category.id }}">
+                                <label class="form-check-label" for="category_{{ category.id }}">{{ category.name }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">สร้างกระทู้</button>
+                <a href="{% url 'thread-list' %}" class="btn btn-secondary">← กลับไปหน้ารายการกระทู้</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for creating category -->
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createCategoryModalLabel">สร้างหมวดหมู่ใหม่</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="create-category-form" method="post" action="{% url 'create-category' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="category_name" class="form-label">ชื่อหมวดหมู่</label>
+                        <input type="text" class="form-control" id="category_name" name="name" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </form>                
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-check-input {
+        display: none;
+    }
+
+    .form-check-label {
+        padding: 10px 20px;
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .form-check-input:checked + .form-check-label {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
+
+<script>
+    document.getElementById('create-category-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const url = this.action;
+        
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Category created successfully.');
+                location.reload();  // รีเฟรชหน้าเพื่อแสดง category ใหม่
+            } else if (data.error) {
+                alert(data.error);  // แสดงข้อความ error
+            }
+        })
+        .catch(error => {
+            alert('An error occurred. Please try again.');
+        });
+    });
+    </script>
+
+{% endblock %}

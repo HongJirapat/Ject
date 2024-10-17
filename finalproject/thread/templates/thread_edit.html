@@ -1,0 +1,34 @@
+{% extends 'nav.html' %}
+{% load myfilters %}
+{% block title %} แก้ไขกระทู้ {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <h2 class="text-center mb-4">แก้ไขกระทู้</h2>
+            <hr>
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="id_title" class="form-label">หัวข้อกระทู้</label>
+                    {{ form.title|add_style:"width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ced4da;" }}
+                    {{ form.title.errors }}
+                </div>
+            
+                <div class="mb-3">
+                    <label for="id_content" class="form-label">เนื้อหากระทู้</label>
+                    {{ form.content|add_style:"width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ced4da;" }}
+                    {{ form.content.errors }}
+                </div>
+                
+                <div class="d-fleป">
+                    <button type="submit" class="btn btn-success">บันทึกการเปลี่ยนแปลง</button>
+                    <a href="{% url 'thread-history' %}" class="btn btn-secondary">กลับไปหน้า History</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

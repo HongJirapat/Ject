@@ -1,0 +1,60 @@
+{% extends 'nav.html' %}
+{% block title %} กระทู้ {% endblock %}
+{% block content %}
+<div class="row pb-4">
+
+    {% if not user.is_staff %}
+    <div class="col">
+        <a type="button" class="btn btn-info" href="{% url 'thread-history' %}">ประวัติการสร้างกระทู้ของฉัน</a>
+    </div>
+
+    <div class="col d-flex justify-content-end">
+        <a type="button" class="btn btn-primary" href="{% url 'thread-create' %}">สร้างกระทู้</a>
+    </div>
+    {% endif %}
+    
+</div>
+<div class="row pb-3">
+    <div class="col-auto">
+        <!-- ปุ่มแสดงทั้งหมด -->
+        <a href="{% url 'thread-list' %}" class="btn btn-outline-dark {% if not selected_category %}active{% endif %}">
+            รวมทุกหมวดหมู่
+        </a>
+
+        <!-- สร้างปุ่มสำหรับหมวดหมู่แต่ละอัน -->
+        {% for category in categories %}
+            <a href="{% url 'thread-list' %}?category={{ category.id }}" 
+               class="btn btn-outline-dark {% if selected_category == category.id %}active{% endif %}">
+                {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Author</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for thread in threads %}
+                <tr>
+                    <td>{{ thread.author.username }}</td> 
+                    <td><a href="{% url 'thread-detail' thread.id %}">{{ thread.title }}</a></td>
+                    <td>{{ thread.created_at|date:"Y-m-d H:i" }}</td> 
+                </tr>
+                {% empty %} 
+                <tr>
+                    <td colspan="3" class="text-center">ไม่มีกระทู้ ณ ตอนนี้</td> 
+                </tr>
+                {% endfor %} 
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

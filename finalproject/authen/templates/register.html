@@ -1,0 +1,44 @@
+{% extends 'nav.html' %}
+{% load myfilters %}
+{% load static %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="margin-top:60px;">
+    <div class="col-md-4 col-lg-4 p-4" style="background-color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <h2 class="text-center mb-4">Register</h2>
+        <form method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label><br>
+                {{ form.username|add_style:'border: 1px solid #ddd; border-radius: 5px; padding: 7px; font-size: 16px; width: 100%; max-width: 600px; box-sizing: border-box;' }} 
+                {{ form.username.errors }}
+            </div>
+            <div class="mb-3">
+                <label for="password1" class="form-label">Password</label><br>
+                {{ form.password1|add_style:'border: 1px solid #ddd; border-radius: 5px; padding: 7px; font-size: 16px; width: 100%; max-width: 600px; box-sizing: border-box;' }}  <!-- ใช้ฟอร์มจาก Django -->
+                {{ form.password1.errors }}
+            </div>
+            <div class="mb-3">
+                <label for="password2" class="form-label">Confirm Password</label><br>
+                {{ form.password2|add_style:'border: 1px solid #ddd; border-radius: 5px; padding: 7px; font-size: 16px; width: 100%; max-width: 600px; box-sizing: border-box;' }}  <!-- ใช้ฟอร์มจาก Django -->
+                {{ form.password2.errors }}
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+            <div class="text-end mt-3">
+                <a href="{% url 'login' %}" class="text-decoration-none">Already have an account? Login here</a>
+            </div>
+            <br>
+            {% if messages %}
+                <div>
+                    {% for message in messages %}
+                        <p class="text-success">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}
+    
